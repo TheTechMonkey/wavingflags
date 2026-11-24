@@ -3,7 +3,7 @@
   "id": "wavingflags",
   "version": "${version}",
   "name": "Waving Flags",
-  "description": "Flags that really wave in the wind. Design one on a banner in the loom, craft it with 1, 2 or 3 sticks for a small, medium or large flag, and right-click a fence post to hang it.",
+  "description": "Flags that really wave in the wind. Design one on a banner in the loom, craft 2, 4 or 6 matching banners (or wool for a plain flag) with a stick for a small, medium or large flag, and right-click a fence post to hang it.",
   "authors": [
     "TechMonkey"
   ],

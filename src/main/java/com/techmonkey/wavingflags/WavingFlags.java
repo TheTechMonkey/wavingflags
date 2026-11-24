@@ -45,16 +45,6 @@ public class WavingFlags implements ModInitializer {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
-    /** The flag item for a flag made with this many sticks (1, 2 or 3), or null. */
-    public static BlockItem flagForSticks(int sticks) {
-        return switch (sticks) {
-            case 1 -> SMALL_FLAG_ITEM;
-            case 2 -> MEDIUM_FLAG_ITEM;
-            case 3 -> LARGE_FLAG_ITEM;
-            default -> null;
-        };
-    }
-
     private static FlagBlock registerBlock(String name, int size) {
         ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, id(name));
         return Registry.register(BuiltInRegistries.BLOCK, key, new FlagBlock(size, BlockBehaviour.Properties.of()
