@@ -19,6 +19,9 @@ Fabric mod for Minecraft 26.3. Needs Fabric API. Install on the server and every
 3. Build a pole out of fences and right-click the side of the top post. The flag hangs off
    that side, top edge level with the post, and flies away from it.
 
+Right-click a hung flag with a **stick** to turn its design a quarter turn (four positions),
+for example to make horizontal stripes vertical.
+
 Flags are 1.5 times as long as they are tall. The cloth is real rippling geometry, so it
 looks right from every angle, and each flag waves a little out of step with its neighbors.
 Break the flag (or its post) and you get it back with its design. Plain flags in every color

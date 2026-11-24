@@ -57,6 +57,7 @@ public class FlagRenderer implements BlockEntityRenderer<FlagBlockEntity, FlagRe
         state.size = flag.getSize();
         state.baseColor = flag.getBaseColor();
         state.patterns = flag.getPatterns();
+        state.rotation = flag.getRotation();
         long gameTime = flag.getLevel() != null ? flag.getLevel().getGameTime() : 0L;
         state.time = (gameTime % 240000L) + partialTicks;
         BlockPos pos = flag.getBlockPos();
@@ -105,8 +106,10 @@ public class FlagRenderer implements BlockEntityRenderer<FlagBlockEntity, FlagRe
         private final float[][] z;
         private final float[] normalX;
         private final float[] normalZ;
+        private final int rotation;
 
         Cloth(FlagRenderState state) {
+            rotation = state.rotation & 3;
             int size = Math.max(1, state.size);
             float height = size - 0.0625F;
             float length = height * 1.5F;
@@ -169,29 +172,49 @@ public class FlagRenderer implements BlockEntityRenderer<FlagBlockEntity, FlagRe
 
         void draw(PoseStack.Pose pose, VertexConsumer buffer, TextureAtlasSprite sprite, int color, int light) {
             for (int i = 0; i < columns; i++) {
-                float u0 = sprite.getU(TEX_LEFT + TEX_WIDTH * i / columns);
-                float u1 = sprite.getU(TEX_LEFT + TEX_WIDTH * (i + 1) / columns);
                 for (int j = 0; j < rows; j++) {
-                    float v0 = sprite.getV(TEX_TOP + TEX_HEIGHT * j / rows);
-                    float v1 = sprite.getV(TEX_TOP + TEX_HEIGHT * (j + 1) / rows);
                     // Front: top-left, bottom-left, bottom-right, top-right (counter-clockwise seen from the front).
-                    vertex(pose, buffer, i, j, u0, v0, color, light, 1.0F);
-                    vertex(pose, buffer, i, j + 1, u0, v1, color, light, 1.0F);
-                    vertex(pose, buffer, i + 1, j + 1, u1, v1, color, light, 1.0F);
-                    vertex(pose, buffer, i + 1, j, u1, v0, color, light, 1.0F);
+                    vertex(pose, buffer, sprite, i, j, color, light, 1.0F);
+                    vertex(pose, buffer, sprite, i, j + 1, color, light, 1.0F);
+                    vertex(pose, buffer, sprite, i + 1, j + 1, color, light, 1.0F);
+                    vertex(pose, buffer, sprite, i + 1, j, color, light, 1.0F);
                     // Back: the same quad wound the other way, so it's visible from behind too.
-                    vertex(pose, buffer, i + 1, j, u1, v0, color, light, -1.0F);
-                    vertex(pose, buffer, i + 1, j + 1, u1, v1, color, light, -1.0F);
-                    vertex(pose, buffer, i, j + 1, u0, v1, color, light, -1.0F);
-                    vertex(pose, buffer, i, j, u0, v0, color, light, -1.0F);
+                    vertex(pose, buffer, sprite, i + 1, j, color, light, -1.0F);
+                    vertex(pose, buffer, sprite, i + 1, j + 1, color, light, -1.0F);
+                    vertex(pose, buffer, sprite, i, j + 1, color, light, -1.0F);
+                    vertex(pose, buffer, sprite, i, j, color, light, -1.0F);
                 }
             }
         }
 
-        private void vertex(PoseStack.Pose pose, VertexConsumer buffer, int i, int j, float u, float v, int color, int light, float facing) {
+        private void vertex(PoseStack.Pose pose, VertexConsumer buffer, TextureAtlasSprite sprite, int i, int j, int color, int light, float facing) {
+            // Where this point of the cloth is: across from the pole (0-1) and down from the top (0-1).
+            float across = (float) i / columns;
+            float down = (float) j / rows;
+            // Which point of the banner picture lands here, after turning the picture by quarter turns.
+            float pictureX;
+            float pictureY;
+            switch (rotation) {
+                case 1 -> {
+                    pictureX = down;
+                    pictureY = 1.0F - across;
+                }
+                case 2 -> {
+                    pictureX = 1.0F - across;
+                    pictureY = 1.0F - down;
+                }
+                case 3 -> {
+                    pictureX = 1.0F - down;
+                    pictureY = across;
+                }
+                default -> {
+                    pictureX = across;
+                    pictureY = down;
+                }
+            }
             buffer.addVertex(pose, x[i][j], y[i][j], z[i][j])
                     .setColor(color)
-                    .setUv(u, v)
+                    .setUv(sprite.getU(TEX_LEFT + TEX_WIDTH * pictureX), sprite.getV(TEX_TOP + TEX_HEIGHT * pictureY))
                     .setOverlay(OverlayTexture.NO_OVERLAY)
                     .setLight(light)
                     .setNormal(pose, normalX[i] * facing, 0.0F, normalZ[i] * facing);

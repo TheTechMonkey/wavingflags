@@ -18,6 +18,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class FlagBlockEntity extends BlockEntity {
     private DyeColor baseColor = DyeColor.WHITE;
     private BannerPatternLayers patterns = BannerPatternLayers.EMPTY;
+    /** Quarter turns (0-3) the design is rotated on the cloth, changed with a stick. */
+    private int rotation;
 
     public FlagBlockEntity(BlockPos pos, BlockState state) {
         super(WavingFlags.FLAG_BLOCK_ENTITY, pos, state);
@@ -31,6 +33,19 @@ public class FlagBlockEntity extends BlockEntity {
         return patterns;
     }
 
+    public int getRotation() {
+        return rotation;
+    }
+
+    /** Turns the design a quarter turn and sends the change to players nearby. */
+    public void rotateDesign() {
+        rotation = (rotation + 1) & 3;
+        setChanged();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
     public int getSize() {
         return getBlockState().getBlock() instanceof FlagBlock flag ? flag.getSize() : 1;
     }
@@ -39,6 +54,7 @@ public class FlagBlockEntity extends BlockEntity {
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.store("base_color", DyeColor.CODEC, baseColor);
+        output.putInt("rotation", rotation);
         if (!patterns.equals(BannerPatternLayers.EMPTY)) {
             output.store("patterns", BannerPatternLayers.CODEC, patterns);
         }
@@ -48,6 +64,7 @@ public class FlagBlockEntity extends BlockEntity {
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
         baseColor = input.read("base_color", DyeColor.CODEC).orElse(DyeColor.WHITE);
+        rotation = input.getIntOr("rotation", 0) & 3;
         patterns = input.read("patterns", BannerPatternLayers.CODEC).orElse(BannerPatternLayers.EMPTY);
     }
 

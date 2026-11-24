@@ -12,4 +12,5 @@ public class FlagRenderState extends BlockEntityRenderState {
     public BannerPatternLayers patterns = BannerPatternLayers.EMPTY;
     public float time;
     public float seed;
+    public int rotation;
 }
