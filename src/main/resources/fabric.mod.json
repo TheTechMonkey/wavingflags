@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "wavingflags",
+  "version": "${version}",
+  "name": "Waving Flags",
+  "description": "Flags that really wave in the wind. Design one on a banner in the loom, craft it with 1, 2 or 3 sticks for a small, medium or large flag, and right-click a fence post to hang it.",
+  "authors": [
+    "TechMonkey"
+  ],
+  "contact": {
+    "sources": "https://github.com/TheTechMonkey/wavingflags"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.techmonkey.wavingflags.WavingFlags"
+    ],
+    "client": [
+      "com.techmonkey.wavingflags.client.WavingFlagsClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "fabric-api": "*",
+    "minecraft": "~26.3",
+    "java": ">=25"
+  }
+}

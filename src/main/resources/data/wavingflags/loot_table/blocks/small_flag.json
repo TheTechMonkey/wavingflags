@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "wavingflags:small_flag",
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "source": "block_entity",
+            "include": [
+              "minecraft:custom_name",
+              "minecraft:base_color",
+              "minecraft:banner_patterns"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "random_sequence": "wavingflags:blocks/small_flag"
+}
